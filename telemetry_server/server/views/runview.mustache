@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title id="title">CalSTAR Telemetry Runs</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+    crossorigin="anonymous">
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+
+<body>
+  <nav class="navbar navbar-light bg-light">
+    <a class="navbar-brand" href="/">CalSTAR Telemetry</a>
+  </nav>
+  <script type="text/javascript" src="/dist/client.js"></script>
+  <a class="btn btn-primary" href="/runs">Back To Runs</a>
+  <a class="btn btn-danger" href="/">Home</a>
+  <a class="btn btn-success" href="/export/{{runId}}">Download</a>
+  <form action="/deleteRuns/{{runId}}" method="post">
+    <button name="deleteRun" type="submit" class="btn btn-danger">Delete</button>
+  </form>
+  <div id="plot"></div>
+  <table class="table table-striped">
+    <tr>
+      {{#type}}
+      <th>{{measurement}}</th>
+      {{/type}}
+    </tr>
+    {{#data}}
+    <tr>
+      <!--{{#type}}
+      <td>{{measurement}}</td>
+      {{/type}}-->
+      <!--<td>{{Time}}</td>
+      <td>{{Altitude}}</td> 
+      <td>{{Temperature}}</td>
+      <td>{{Acceleration}}</td>-->
+      {{#row}}
+      <td>{{point}}</td>
+      {{/row}}
+    </tr>
+    {{/data}}
+  </table>
+  <script>
+    var counts = [];
+    {{#data}}
+      counts[{{dataTypeId}}] = 0;
+    {{/data}}
+    {{#data}}
+      counts[{{dataTypeId}}]++;
+    {{/data}}
+
+    var dataArr = new Array(counts.length);
+    var traces = new Array(counts.length-1);
+
+    for (i=1; i<counts.length; i++) {
+      dataArr[i] = new Array(counts[i]);
+    }
+
+    {{#data}}
+      dataArr[{{dataTypeId}}][{{dataIndex}}] = {{value}};
+    {{/data}}
+
+    for (i=1; i < dataArr.length; i++) {
+     var trace = {
+       x: Array.from(dataArr[i].keys()),
+       y: dataArr[i],
+       mode: 'lines'
+      };
+      traces[i-1] = trace;
+    }
+
+    Plotly.newPlot('plot', traces);
+
+  </script>
+</body>
+
+</html>

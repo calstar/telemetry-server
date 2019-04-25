@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title id="title">CalSTAR Telemetry</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+  </head>
+
+  <body>
+    <nav class="navbar navbar-light bg-light">
+        <a class="navbar-brand" href="/">CalSTAR Telemetry</a>
+    </nav>
+    <script type="text/javascript" src="/dist/client.js"></script>
+    <h4>Login with Google</h4>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="319896366608-tpab77s86cva0u1jooc0a1l4ba4m6sfq.apps.googleusercontent.com">
+    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    <script>
+      function onSignIn(googleUser) {
+          var idToken = googleUser.getAuthResponse().id_token
+          var profile = googleUser.getBasicProfile()
+          var xhr = new XMLHttpRequest()
+          // TODO change link, or move this file somewhere else
+          xhr.open('POST', 'http://lvh.me:8000/login')
+          xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+          xhr.send('idtoken=' + idToken + '&email=' + profile.getEmail())
+      }
+    </script>
+    <a href="#" onclick="signOut();">Sign out</a>
+    <script>
+      function signOut() {
+        var auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function () {
+          console.log('User signed out.');
+        });
+      }
+    </script>
+    <div>
+        <br><br>
+        <a class="btn btn-danger" href="/">Home</a>
+    </div>
+  </body>
+</html>
